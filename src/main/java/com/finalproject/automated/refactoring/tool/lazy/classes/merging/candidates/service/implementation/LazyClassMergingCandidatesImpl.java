@@ -18,19 +18,24 @@ public class LazyClassMergingCandidatesImpl implements LazyClassMergingCandidate
         int callCountMax = 0;
         for(ClassModel target : classes){
             if(!target.getName().equals(lazyClass.getName())){
-                Pattern pattern = Pattern.compile(sourceClassName, Pattern.MULTILINE);
+                Pattern pattern = Pattern.compile(sourceClassName+"\\s+\\w+", Pattern.MULTILINE);
                 Matcher matcher = pattern.matcher(target.getFullContent());
-                int count = 0;
-                while (matcher.find()) {
-                    count++;
-                }
-                if(count > callCountMax){
-                    callCountMax = count;
-                    targetClassIndex = classes.indexOf(target);
-                }
-                else if(count == callCountMax){
-                    if(target.getLoc() < classes.get(targetClassIndex).getLoc()){
+                while(matcher.find()){
+                    String[] temp = target.getFullContent().substring(matcher.start(), matcher.end()).trim().split(" ");
+                    Pattern callPattern = Pattern.compile(temp[1]+"\\.", Pattern.MULTILINE);
+                    Matcher callMatcher = pattern.matcher(target.getFullContent());
+                    int count = 0;
+                    while (callMatcher.find()) {
+                        count++;
+                    }
+                    if(count > callCountMax){
+                        callCountMax = count;
                         targetClassIndex = classes.indexOf(target);
+                    }
+                    else if(count == callCountMax){
+                        if(target.getLoc() < classes.get(targetClassIndex).getLoc()){
+                            targetClassIndex = classes.indexOf(target);
+                        }
                     }
                 }
             }
