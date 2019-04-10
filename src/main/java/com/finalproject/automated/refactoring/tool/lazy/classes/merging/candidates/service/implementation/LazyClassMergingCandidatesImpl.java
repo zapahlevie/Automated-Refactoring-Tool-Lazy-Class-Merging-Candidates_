@@ -23,7 +23,7 @@ public class LazyClassMergingCandidatesImpl implements LazyClassMergingCandidate
                 while(matcher.find()){
                     String[] temp = target.getFullContent().substring(matcher.start(), matcher.end()).trim().split(" ");
                     Pattern callPattern = Pattern.compile(temp[1]+"\\.", Pattern.MULTILINE);
-                    Matcher callMatcher = pattern.matcher(target.getFullContent());
+                    Matcher callMatcher = callPattern.matcher(target.getFullContent());
                     int count = 0;
                     while (callMatcher.find()) {
                         count++;
